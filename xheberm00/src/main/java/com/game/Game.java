@@ -53,6 +53,7 @@ public class Game extends Application {
 				Button button = new Button("", imgview);
 				button.setOnMouseClicked(event -> {
 					printProperties(finalR, finalC);
+					button.setRotate(button.getRotate() + 90);
 				});
 				gridpane.add(button, c, r);
 			}
