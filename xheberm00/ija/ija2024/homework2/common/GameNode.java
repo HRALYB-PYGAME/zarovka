@@ -1,4 +1,4 @@
-package com.game;
+package ija.ija2024.homework2.common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,30 +11,6 @@ public class GameNode implements ToolField {
 	boolean east_connector, north_connector, south_connector, west_connector;
 	boolean isPowered = false;
 	List<Observer> observers = new ArrayList<>();
-
-    public int connectorsType(){
-        int count = 0;
-        if (north_connector) count++;
-        if (south_connector) count++;
-        if (east_connector) count++;
-        if (west_connector) count++;
-    
-        if (count == 0) {
-            return 0;
-        } else if (count == 1) {
-            return 1;
-        } else if (count == 2) {
-            if ((north_connector && south_connector) || (east_connector && west_connector)) {
-                return 2;
-            } else {
-                return 3;
-            }
-        } else if (count == 3) {
-            return 4;
-        } else {
-            return 5;
-        }
-    }
 
 	public String toString() {
 		String info = "{";
@@ -126,10 +102,6 @@ public class GameNode implements ToolField {
 	public boolean isPower() {
 		return power;
 	}
-
-    public boolean isEmpty() {
-        return !(power || link || bulb);
-    }
 
 	public void turn() {
 		boolean east, north, south, west;

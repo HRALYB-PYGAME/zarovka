@@ -1,4 +1,4 @@
-package com.game;
+package ija.ija2024.homework2.common;
 
 public class Position {
 	int row, col;

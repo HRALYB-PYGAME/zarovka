@@ -1,4 +1,9 @@
-package com.game;
+package ija.ija2024.homework2.game;
+
+import ija.ija2024.homework2.common.GameNode;
+import ija.ija2024.homework2.common.Position;
+import ija.ija2024.homework2.common.Side;
+import ija.ija2024.homework2.common.NoPowerSourceException;
 
 import ija.ija2024.tool.common.ToolEnvironment;
 import ija.ija2024.tool.common.ToolField;
@@ -8,7 +13,7 @@ public class Game implements ToolEnvironment, Observable.Observer {
 	int row, col;
 	static GameNode playfield[][];
 	boolean power_in_game = false;
-
+	
 	@Override
 	public void update(Observable o){
 		init();	
@@ -40,8 +45,8 @@ public class Game implements ToolEnvironment, Observable.Observer {
 	public void init() {
 		int power_row = -1;
 		int power_col = -1;
-		for (int i = 0; i < rows(); i++) {
-			for (int j = 0; j < cols(); j++) {
+		for (int i = 0; i < rows() - 1; i++) {
+			for (int j = 0; j < cols() - 1; j++) {
 				playfield[i][j].destroyLight();
 				if (playfield[i][j].isPower()) {
 					power_row = i;

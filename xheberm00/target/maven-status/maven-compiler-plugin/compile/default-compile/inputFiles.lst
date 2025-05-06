@@ -1,4 +1,7 @@
 /root/zarovka/xheberm00/src/main/java/com/game/Game.java
+/root/zarovka/xheberm00/src/main/java/com/game/UI.java
+/root/zarovka/xheberm00/src/main/java/com/game/GameObserver.java
 /root/zarovka/xheberm00/src/main/java/com/game/Side.java
+/root/zarovka/xheberm00/src/main/java/com/game/NoPowerSourceException.java
 /root/zarovka/xheberm00/src/main/java/com/game/GameNode.java
 /root/zarovka/xheberm00/src/main/java/com/game/Position.java

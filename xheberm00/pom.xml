@@ -32,6 +32,11 @@
             <artifactId>javafx-graphics</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.game</groupId>
+            <artifactId>ijatool</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -56,7 +61,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.game.Game</mainClass> <!-- Specify the main class for JavaFX -->
+                    <mainClass>com.game.UI</mainClass> <!-- Specify the main class for JavaFX -->
                 </configuration>
                 <executions>
                     <execution>
