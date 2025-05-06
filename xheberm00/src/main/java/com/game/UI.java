@@ -6,6 +6,9 @@ import java.util.List;
 import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -101,7 +104,8 @@ public class UI extends Application{
 				button.setOnMouseClicked(event -> {
 					printProperties(finalR, finalC);
                     newgame.node(new Position(finalR, finalC)).turn();
-                    updateLog("game", finalR, finalC);
+                    if(!newgame.node(new Position(finalR, finalC)).isEmpty())
+                        updateLog("game", finalR, finalC);
                     updateButtons();
 				});
                 buttons.add(button);
@@ -132,20 +136,101 @@ public class UI extends Application{
 
     void updateLog(String filename, int row, int col){
         try{
+            removelastnlines(filename, turnsbacked);
+            turnsbacked = 0;
             FileWriter filewriter = new FileWriter(filename, true);
-            filewriter.write(row + " " + col);
+            filewriter.write(row + " " + col + "\n");
             filewriter.close();
+            readnthlinefromend(filename, 2);
         } catch (IOException e){
             System.out.println(e);
         }
     }
 
-    void stepBack(String filename){
+    void removelastnlines(String filename, int lines){
+        try{
+            System.out.println("removing: " + lines);
+            List<String> filelines = Files.readAllLines(Paths.get(filename));
+            if (filelines.size() <= lines){
+                Files.write(Paths.get(filename), new byte[0]);
+            } else{
+                List<String> trimmed = filelines.subList(0, filelines.size() - lines);
+                Files.write(Paths.get(filename), trimmed);
+            }
+        } catch (IOException e){
+            System.out.println(e);
+        }
+    }
+
+    String readnthlinefromend(String filename, int linestogoback){
+        String line = "";
+        if(linestogoback == 0) return "";
+        try {
+            RandomAccessFile randomaccess = new RandomAccessFile(filename, "r");
+            long length = randomaccess.length();
+            if (length == 0){
+                randomaccess.close();
+                return "";
+            }
+            
+            StringBuilder builder = new StringBuilder();
+
+            long ptr = length - 1;
+            while(ptr >= 0 && linestogoback >= 0){
+                randomaccess.seek(ptr);
+                char c = (char) randomaccess.read();
+                if(c == '\n'){
+                    linestogoback--;
+                }
+                if(linestogoback == 0){
+                    builder.append(c);
+                }
+                ptr--;
+            }
+            line = builder.reverse().toString();
+            System.out.println("line:" + line + "n");
+            randomaccess.close();
+            return line;
+        } catch (IOException e){
+            System.out.println(e);
+        }
         System.out.println("steping back");
+        return "";
+    }
+
+    void stepBack(String filename){
+        String line = readnthlinefromend(filename, turnsbacked+1);
+
+        if (line == "") return;
+
+        String[] parts = line.trim().split("\\s+");
+
+        if(parts.length < 2) return;
+        int row = Integer.parseInt(parts[0]);
+        int col = Integer.parseInt(parts[1]);
+
+        for(int i = 0; i < 3; i++){
+            newgame.node(new Position(row, col)).turn();
+        }
+        updateButtons();
+
+        turnsbacked++;
     }
 
     void stepForward(String filename){
-        System.out.println("steping forward");
+        String line = readnthlinefromend(filename, turnsbacked);
+
+        if (line == "") return;
+
+        String[] parts = line.trim().split("\\s+");
+
+        int row = Integer.parseInt(parts[0]);
+        int col = Integer.parseInt(parts[1]);
+
+        newgame.node(new Position(row, col)).turn();
+        updateButtons();
+
+        turnsbacked--;
     }
 
     void updateButtons(){
