@@ -57,15 +57,93 @@ public class UI extends Application{
 
     public static void generateGame(int bulbs, int rows, int cols){
         newgame = Game.create(Math.max(rows, cols), Math.max(rows, cols));
-        newgame.createBulbNode(new Position(1, 5), Side.NORTH);
-        newgame.createLinkNode(new Position(2, 5), Side.EAST, Side.SOUTH);
-        newgame.createLinkNode(new Position(2, 4), Side.NORTH, Side.SOUTH);
-        newgame.createPowerNode(new Position(2, 3), Side.NORTH, Side.WEST, Side.EAST);
+        int powercol = (int)(Math.random() * cols);
+        int powerrow = (int)(Math.random() * rows);
+        newgame.createPowerNode(new Position(powerrow+1, powercol+1), Side.NORTH, Side.WEST, Side.EAST);
+        double probability = 0;
+        boolean[][] filled;
+        filled = new boolean[rows][cols];
+        for (boolean[] bs : filled) {
+            for (boolean i : bs) {
+                i = false;
+            }
+        }
+        filled[powerrow][powercol] = true;
+        List<Position> path = new ArrayList<>();
+        path.add(new Position(powerrow+1, powercol+1));
+
+        System.out.println(powerrow + " " + powercol);
+        while(Math.random() > probability){
+            int direction = (int)(Math.random() * 4);
+            
+            if(direction == 0 && powerrow != rows-1){
+                if(filled[powerrow+1][powercol] == false){
+                    powerrow += 1;
+                    filled[powerrow][powercol] = true;
+                    path.add(new Position(powerrow+1, powercol+1));
+                }
+            }
+            if(direction == 1 && powercol != cols-1){
+                if(filled[powerrow][powercol+1] == false){
+                    powercol += 1;
+                    filled[powerrow][powercol] = true;
+                    path.add(new Position(powerrow+1, powercol+1));
+                }
+            }
+            if(direction == 2 && powerrow != 0){
+                if(filled[powerrow-1][powercol] == false){
+                    powerrow -= 1;
+                    filled[powerrow][powercol] = true;
+                    path.add(new Position(powerrow+1, powercol+1));
+                }
+            }
+            if(direction == 3 && powercol != 0){
+                if(filled[powerrow][powercol-1] == false){
+                    powercol -= 1;
+                    filled[powerrow][powercol] = true;
+                    path.add(new Position(powerrow+1, powercol+1));
+                }
+            }
+            if(path.size() > 1) probability = 0.01;
+        }
+        
+        int i = 1;
+        while(i < path.size() - 1){
+            Position previous = path.get(i-1);
+            Position current = path.get(i);
+            Position next = path.get(i+1);
+            Side from = Side.EAST;
+            Side to = Side.WEST;
+            if(current.col - previous.col == 1) from = Side.WEST;
+            if(current.col - previous.col == -1) from = Side.EAST;
+            if(current.row - previous.row == 1) from = Side.NORTH;
+            if(current.row - previous.row == -1) from = Side.SOUTH;
+            if(next.col - current.col == 1) to = Side.EAST;
+            if(next.col - current.col == -1) to= Side.WEST;
+            if(next.row - current.row == 1) to = Side.SOUTH;
+            if(next.row - current.row == -1) to = Side.NORTH;
+            newgame.createLinkNode(current, from, to);
+            i++;
+        }
+        Position current = path.get(path.size()-1);
+        Position previous = path.get(path.size()-2);
+        Side from = Side.NORTH;
+        if(current.col - previous.col == 1) from = Side.WEST;
+        if(current.col - previous.col == -1) from = Side.EAST;
+        if(current.row - previous.row == 1) from = Side.NORTH;
+        if(current.row - previous.row == -1) from = Side.SOUTH;
+        newgame.createBulbNode(current, from);
+
+        newgame.rotateAll();
     }
 
+    
+
     public void printProperties(int r, int c){
-		System.out.println("row: " + r + " col: " + c);
-	}
+        GameNode node = newgame.node(new Position(r, c));
+        System.out.println(node.position.col + " " + node.position.row + " " + node.isBulb() + " " + node.isLink() + " " + node.isPower());
+        System.out.println(node.east_connector + " " + node.south_connector + " " + node.west_connector + " " + node.north_connector);
+    }
 
     @Override
 	public void start(Stage primaryStage) {
@@ -91,7 +169,6 @@ public class UI extends Application{
 		for(int r = 0; r < rows; r++){
 			for(int c = 0; c < cols; c++){
                 GameNode node = newgame.node(new Position(r+1, c+1));
-                System.out.println(node.bulb + " " + node.link + " " + node.power);
                 imgview = getCorrectImageView(node);
 				
 				imgview.fitWidthProperty().bind(gridpane.widthProperty().divide(cols));
@@ -131,7 +208,6 @@ public class UI extends Application{
 		primaryStage.setScene(scene);
 		primaryStage.sizeToScene();
 		primaryStage.show();
-		System.out.println(scene.getWidth() + scene.getHeight());
 	}
 
     void updateLog(String filename, int row, int col){
@@ -149,7 +225,6 @@ public class UI extends Application{
 
     void removelastnlines(String filename, int lines){
         try{
-            System.out.println("removing: " + lines);
             List<String> filelines = Files.readAllLines(Paths.get(filename));
             if (filelines.size() <= lines){
                 Files.write(Paths.get(filename), new byte[0]);
@@ -188,13 +263,11 @@ public class UI extends Application{
                 ptr--;
             }
             line = builder.reverse().toString();
-            System.out.println("line:" + line + "n");
             randomaccess.close();
             return line;
         } catch (IOException e){
             System.out.println(e);
         }
-        System.out.println("steping back");
         return "";
     }
 
@@ -243,10 +316,8 @@ public class UI extends Application{
             imageview.fitWidthProperty().bind(gridpane.widthProperty().divide(cols));
             imageview.fitHeightProperty().bind(gridpane.heightProperty().divide(rows));
             button.setGraphic(imageview);
+            //if(!node.isEmpty()) System.out.println(node.position.col + " " + node.position.row + " " + node.isBulb() + " " + node.isLink() + " " + node.isPower());
             i++;
-            if(!node.isEmpty()){
-                System.out.println("r: " + r+1 + " c " + c+1 + " light " + node.light());
-            }
         }
     }
 

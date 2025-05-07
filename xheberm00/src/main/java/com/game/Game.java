@@ -57,6 +57,20 @@ public class Game implements ToolEnvironment, Observable.Observer {
 		testIfPowered(power_row, power_col);
 	}
 
+	public void rotateAll(){
+        for(int r = 1; r < this.row; r++){
+            for(int c = 1; c < this.col; c++){
+                GameNode node = this.node(new Position(r, c));
+                if(!node.isEmpty()){
+                    int random = (int)(Math.random() * 4);
+                    for(int i = 0; i < random; i++){
+                        node.turn();
+                    }
+                }
+            }
+        }
+    }
+
 	public void testIfPowered(int row, int col) {
 		if (playfield[row][col].light()) return;
 		playfield[row][col].setLight();
