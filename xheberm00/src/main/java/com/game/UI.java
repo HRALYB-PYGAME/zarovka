@@ -15,9 +15,11 @@ import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
@@ -26,8 +28,11 @@ public class UI extends Application{
     static Game newgame;
     static List<Button> buttons = new ArrayList<>();
     static GridPane gridpane = new GridPane();
+    static GridPane hint = new GridPane();
     int rows = newgame.rows();
 	int cols = newgame.cols();
+
+
 
     int turnsbacked = 0;
 
@@ -51,7 +56,7 @@ public class UI extends Application{
     Image empty = new Image("file:lib/empty.png");;
 
     public static void main(String[] args) {
-        generateGame(1, 8, 5);
+        generateGame(1, 30, 30);
 		launch(args);
 	}
 
@@ -63,11 +68,6 @@ public class UI extends Application{
         double probability = 0;
         boolean[][] filled;
         filled = new boolean[rows][cols];
-        for (boolean[] bs : filled) {
-            for (boolean i : bs) {
-                i = false;
-            }
-        }
         filled[powerrow][powercol] = true;
         List<Position> path = new ArrayList<>();
         path.add(new Position(powerrow+1, powercol+1));
@@ -104,7 +104,7 @@ public class UI extends Application{
                     path.add(new Position(powerrow+1, powercol+1));
                 }
             }
-            if(path.size() > 1) probability = 0.01;
+            if(path.size() > 1) probability = 0.0005;
         }
         
         int i = 1;
@@ -149,21 +149,23 @@ public class UI extends Application{
 	public void start(Stage primaryStage) {
 		ImageView imgview;
 
-		double windowWidth = 600;
-		double windowHeight = 600;
+		double windowWidth = 1080;
+		double windowHeight = 1080;
 
-        //System.out.println(windowHeight + " " + windowWidth + " " +max(cols, rows) );
+        Label[][] labels = new Label[rows][cols];
 		
 		for(int r = 0; r < rows; r++){
 			ColumnConstraints colConstraints = new ColumnConstraints();
 			colConstraints.setPercentWidth(100.0 / cols);
 			gridpane.getColumnConstraints().add(colConstraints);
+            hint.getColumnConstraints().add(colConstraints);
 		}
 
 		for(int c = 0; c < cols; c++){
 			RowConstraints rowConstraints = new RowConstraints();
 			rowConstraints.setPercentHeight(100.0 / rows);
 			gridpane.getRowConstraints().add(rowConstraints);
+            hint.getRowConstraints().add(rowConstraints);
 		}
 
 		for(int r = 0; r < rows; r++){
@@ -182,14 +184,23 @@ public class UI extends Application{
 					printProperties(finalR, finalC);
                     newgame.node(new Position(finalR, finalC)).turn();
                     if(!newgame.node(new Position(finalR, finalC)).isEmpty())
+                        newgame.rotations[finalR-1][finalC-1] = (newgame.rotations[finalR-1][finalC-1]+1)%4;
+                    System.out.println(newgame.rotations[finalR-1][finalC-1]);
+                    if(!newgame.node(new Position(finalR, finalC)).isEmpty())
                         updateLog("game", finalR, finalC);
                     updateButtons();
 				});
                 buttons.add(button);
 				gridpane.add(button, c, r);
+                Label label = new Label("I");
+                label.setFont(new Font(20));
+                label.setContentDisplay(ContentDisplay.CENTER);
+                labels[r][c] = label;
+                hint.add(label, c, r);
 			}
 		}
 		Scene scene = new Scene(gridpane, windowHeight, windowWidth);
+        Scene scene2 = new Scene(hint, windowHeight, windowWidth);
 
         scene.setOnKeyPressed(event -> {
             switch(event.getCode()){
@@ -198,6 +209,20 @@ public class UI extends Application{
                     break;
                 case D:
                     stepForward("game");
+                    break;
+                case E:
+                    updateLabels(labels);
+                    primaryStage.setScene(scene2);
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        scene2.setOnKeyPressed(event -> {
+            switch(event.getCode()){
+                case E:
+                    primaryStage.setScene(scene);
                     break;
                 default:
                     break;
@@ -304,6 +329,18 @@ public class UI extends Application{
         updateButtons();
 
         turnsbacked--;
+    }
+
+    void updateLabels(Label[][] labels){
+        for(int r = 0; r < rows; r++){
+            for(int c = 0; c < cols; c++){
+                int value = newgame.rotations[r][c];
+                value = (4-value)%4;
+                String text = String.valueOf(value);
+                if(value == 0) text = "";
+                labels[r][c].setText(text);
+            }
+        }
     }
 
     void updateButtons(){

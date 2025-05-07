@@ -7,6 +7,7 @@ import ija.ija2024.tool.common.Observable;
 public class Game implements ToolEnvironment, Observable.Observer {
 	int row, col;
 	static GameNode playfield[][];
+	int[][] rotations;
 	boolean power_in_game = false;
 
 	@Override
@@ -33,6 +34,8 @@ public class Game implements ToolEnvironment, Observable.Observer {
 
 		game.setRows(rows);
 		game.setCols(cols);
+
+		game.rotations = new int[rows][cols];
 		return game;
 	}
 
@@ -63,6 +66,7 @@ public class Game implements ToolEnvironment, Observable.Observer {
                 GameNode node = this.node(new Position(r, c));
                 if(!node.isEmpty()){
                     int random = (int)(Math.random() * 4);
+					this.rotations[r-1][c-1] = random;
                     for(int i = 0; i < random; i++){
                         node.turn();
                     }
