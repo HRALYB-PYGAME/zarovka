@@ -1,0 +1,5 @@
+cd ../../../../../
+
+mvn javafx:run
+
+cd src/main/java/com/game

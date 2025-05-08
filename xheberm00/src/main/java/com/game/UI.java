@@ -32,8 +32,6 @@ public class UI extends Application{
     int rows = newgame.rows();
 	int cols = newgame.cols();
 
-
-
     int turnsbacked = 0;
 
     static HashSet<String> currentlyActiveKeys;
