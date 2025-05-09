@@ -29,8 +29,8 @@ public class UI extends Application{
     static List<Button> buttons = new ArrayList<>();
     static GridPane gridpane = new GridPane();
     static GridPane hint = new GridPane();
-    int rows = newgame.rows();
-	int cols = newgame.cols();
+    int rows;
+    int cols;
 
     int turnsbacked = 0;
 
@@ -54,7 +54,6 @@ public class UI extends Application{
     Image empty = new Image("file:lib/empty.png");;
 
     public static void main(String[] args) {
-        generateGame(1, 30, 30);
 		launch(args);
 	}
 
@@ -145,6 +144,18 @@ public class UI extends Application{
 
     @Override
 	public void start(Stage primaryStage) {
+        Parameters params = getParameters();
+        List<String> args = params.getRaw();
+
+        System.out.println("Arguments: " + args);
+
+        int size = Integer.valueOf(args.get(0));
+
+        generateGame(1, size, size);
+
+        rows = newgame.rows();
+	    cols = newgame.cols();
+
 		ImageView imgview;
 
 		double windowWidth = 1080;

@@ -62,6 +62,7 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>com.game.UI</mainClass> <!-- Specify the main class for JavaFX -->
+                    <commandlineArgs>${exec.args}</commandlineArgs>
                 </configuration>
                 <executions>
                     <execution>
@@ -70,6 +71,15 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version> <!-- You can also use 3.0.0 or 3.1.0 -->
+                <configuration>
+                    <mainClass>com.game.UI</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
