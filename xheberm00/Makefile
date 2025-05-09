@@ -35,4 +35,4 @@ advanced:
 	mvn exec:java -Dexec.args="20"
 
 expert:
-	mvn xec:java -Dexec.args="30"
+	mvn exec:java -Dexec.args="30"

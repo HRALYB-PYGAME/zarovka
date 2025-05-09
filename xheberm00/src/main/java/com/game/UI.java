@@ -137,7 +137,7 @@ public class UI extends Application{
                     path.add(new Position(powerrow+1, powercol+1));
                 }
             }
-            if(path.size() > 1) probability = 0.0005;
+            if(path.size() > 1) probability = 0.002;
         }
         
         int i = 1;
@@ -191,6 +191,7 @@ public class UI extends Application{
      */
     @Override
 	public void start(Stage primaryStage) {
+        clearLog("game");
         Parameters params = getParameters();
         List<String> args = params.getRaw();
 
@@ -236,7 +237,6 @@ public class UI extends Application{
 				Button button = new Button("", imgview);
                 button.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
 				button.setOnMouseClicked(event -> {
-					printProperties(finalR, finalC);
                     newgame.node(new Position(finalR, finalC)).turn();
                     if(!newgame.node(new Position(finalR, finalC)).isEmpty())
                         newgame.rotations[finalR-1][finalC-1] = (newgame.rotations[finalR-1][finalC-1]+1)%4;
@@ -288,6 +288,18 @@ public class UI extends Application{
 		primaryStage.sizeToScene();
 		primaryStage.show();
 	}
+
+    /**
+     * Clears the game log file
+     * @param filename filename "game" on default
+     */
+    void clearLog(String filename){
+        try (FileWriter writer = new FileWriter(filename)) {
+            writer.write("");
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+    }
 
     /**
      * Add the most recent node rotation to the game log.
