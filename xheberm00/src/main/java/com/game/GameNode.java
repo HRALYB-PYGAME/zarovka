@@ -1,3 +1,11 @@
+/*
+ * authors:
+ * 		Matyáš Hebert xhebrm00
+ * 		Jan Ostatnický xostatj00
+ *
+ * The GameNode class implementing the nodes of the game, their types, the turning of the nodes, their connectors and logic for managing observers.
+ */ 
+
 package com.game;
 
 import java.util.ArrayList;

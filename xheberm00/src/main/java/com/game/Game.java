@@ -1,3 +1,11 @@
+/*
+ * authors:
+ * 		Matyáš Hebert xheberm00
+ * 		Jan Ostatnický xostatj00
+ *
+ * The Game class representing the gamefield, the logic of the game like creating nodes and powering them. 
+ */
+
 package com.game;
 
 import ija.ija2024.tool.common.ToolEnvironment;

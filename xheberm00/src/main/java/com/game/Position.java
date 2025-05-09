@@ -1,3 +1,11 @@
+/*
+ * authors:
+ * 		Matyáš Hebert xheberm00
+ * 		Jan Ostatnický xostatj00
+ *
+ * The Position class implementing the position of the nodes in the gamefield, overrides the eqauls method.
+ */
+
 package com.game;
 
 /**

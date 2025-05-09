@@ -1,3 +1,11 @@
+/*
+ * authors:
+ * 		Matyáš Hebert xhebrm00
+ * 		Jan Ostatnický xostatj00
+ *
+ * The NoPowerSourceException representing the expection when there is no power source in the gamefield.
+ */
+
 package com.game;
 
 /**
