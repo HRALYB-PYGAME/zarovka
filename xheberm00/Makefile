@@ -5,7 +5,7 @@ all:
 	mvn compile
 	mvn package
 	mvn javadoc:javadoc
-	mvn javafx:run
+	mvn exec:java -Dexec.args="15"
 
 clean:
 	mvn clean
@@ -22,5 +22,17 @@ package:
 javadoc:
 	mvn javadoc:javadoc
 
-run:
-	mvn javafx:run
+easy:
+	mvn exec:java -Dexec.args="5"
+
+medium:
+	mvn exec:java -Dexec.args="10"
+
+hard:
+	mvn exec:java -Dexec.args="15"
+
+advanced:
+	mvn exec:java -Dexec.args="20"
+
+expert:
+	mvn xec:java -Dexec.args="30"

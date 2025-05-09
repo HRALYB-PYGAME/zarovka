@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -201,8 +203,9 @@ public class UI extends Application{
 
 		ImageView imgview;
 
-		double windowWidth = 1080;
-		double windowHeight = 1080;
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+        double windowHeight = screenBounds.getHeight()*0.9;
+        double windowWidth = windowHeight;
 
         Label[][] labels = new Label[rows][cols];
 		
@@ -243,7 +246,7 @@ public class UI extends Application{
 				});
                 buttons.add(button);
 				gridpane.add(button, c, r);
-                Label label = new Label("I");
+                Label label = new Label("");
                 label.setFont(new Font(20));
                 label.setContentDisplay(ContentDisplay.CENTER);
                 labels[r][c] = label;

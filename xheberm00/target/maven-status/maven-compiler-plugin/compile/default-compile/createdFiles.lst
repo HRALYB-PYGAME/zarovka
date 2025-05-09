@@ -1,4 +1,7 @@
+com/game/GameObserver.class
 com/game/Position.class
+com/game/UI.class
+com/game/NoPowerSourceException.class
 com/game/GameNode.class
 com/game/UI$1.class
 com/game/Side.class

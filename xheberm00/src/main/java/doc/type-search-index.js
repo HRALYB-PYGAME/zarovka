@@ -1,1 +1,0 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.game","l":"Game"},{"p":"com.game","l":"GameNode"},{"p":"com.game","l":"GameObserver"},{"p":"com.game","l":"NoPowerSourceException"},{"p":"com.game","l":"Position"},{"p":"com.game","l":"Side"},{"p":"com.game","l":"UI"}];updateSearchResults();
