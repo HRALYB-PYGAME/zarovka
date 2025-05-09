@@ -4,17 +4,32 @@ import ija.ija2024.tool.common.ToolEnvironment;
 import ija.ija2024.tool.common.ToolField;
 import ija.ija2024.tool.common.Observable;
 
+/**
+ * Class representing a game board.
+ * Including the board dimensions, 2D list of GameNodes,
+ * 2D list of integers representing number of rotations from a correct rotation
+ * and a boolean whether a power node is present on the game board.
+ */
 public class Game implements ToolEnvironment, Observable.Observer {
 	int row, col;
 	static GameNode playfield[][];
 	int[][] rotations;
 	boolean power_in_game = false;
 
+	/**
+	 * Updates a state of the game board.
+	 */
 	@Override
 	public void update(Observable o){
 		init();	
 	}
 
+	/**
+	 * Creates a new game board with given dimensions.
+	 * @param rows number of rows.
+	 * @param cols number of columns.
+	 * @return a new instance of Game.
+	 */
 	public static Game create(int rows, int cols) {
 		if (rows <= 0 || cols <= 0) {
 			throw new IllegalArgumentException();
@@ -40,6 +55,10 @@ public class Game implements ToolEnvironment, Observable.Observer {
 	}
 
 
+	/**
+	 * Function that updates all the nodes and whether they are
+	 * powered or not.
+	 */
 	public void init() {
 		int power_row = -1;
 		int power_col = -1;
@@ -60,6 +79,10 @@ public class Game implements ToolEnvironment, Observable.Observer {
 		testIfPowered(power_row, power_col);
 	}
 
+	/**
+	 * Rotates all GameNodes that arent empty 0-3 times
+	 * to ensure a random starting game state
+	 */
 	public void rotateAll(){
         for(int r = 1; r < this.row; r++){
             for(int c = 1; c < this.col; c++){
@@ -75,6 +98,13 @@ public class Game implements ToolEnvironment, Observable.Observer {
         }
     }
 
+	/**
+	 * Recursive function that turns all nodes on if they are connected
+	 * to the power node. 
+	 * 
+	 * @param row number of the power node
+	 * @param col number of the power node
+	 */
 	public void testIfPowered(int row, int col) {
 		if (playfield[row][col].light()) return;
 		playfield[row][col].setLight();
@@ -106,6 +136,12 @@ public class Game implements ToolEnvironment, Observable.Observer {
 		
 	}
 
+	/**
+	 * Creates a new link node on a specified position with given connectors.
+	 * @param p Position of the new node
+	 * @param sides where the conenctors should be placed
+	 * @return GameNode if valid arguments; null otherwise
+	 */
 	public GameNode createLinkNode(Position p, Side... sides) {
 		if (p.getRow() <= 0 || p.getCol() <= 0 || p.getRow() > rows() || p.getCol() > cols() || sides.length < 2 || sides.length > 4) {
 			return null;
@@ -135,6 +171,12 @@ public class Game implements ToolEnvironment, Observable.Observer {
 		return node;
 	}
 
+	/**
+	 * Creates a new power node on a specified position with given connectors.
+	 * @param p Position of the new node
+	 * @param sides where the conenctors should be placed
+	 * @return GameNode if valid arguments; null otherwise
+	 */
 	public GameNode createPowerNode(Position p, Side... sides) {
 		if (p.getRow() <= 0 || p.getCol() <= 0 || p.getRow() > row || p.getCol() > col || power_in_game || sides.length < 1 || sides.length > 4) {
 			return null;
@@ -165,6 +207,12 @@ public class Game implements ToolEnvironment, Observable.Observer {
 		return node;
 	}
 
+	/**
+	 * Creates a new bulb node on a specified position with given connectors.
+	 * @param p Position of the new node
+	 * @param sides where the conenctors should be placed
+	 * @return GameNode if valid arguments; null otherwise
+	 */
 	public GameNode createBulbNode(Position p, Side sides) {
 		if (p.getRow() <= 0 || p.getCol() <= 0 || p.getRow() > row || p.getCol() > col) {
 			return null;
@@ -192,26 +240,53 @@ public class Game implements ToolEnvironment, Observable.Observer {
 		return node;
 	}
 
+	/**
+	 * Sets number of rows of this game board.
+	 * @param row number of rows
+	 */
 	public void setRows(int row) {
 		this.row = row;
 	}
 
+	/**
+	 * @return number of rows
+	 */
 	public int rows() {
 		return row;
 	}
 
+	/**
+	 * Sets number of columns of this game board.
+	 * @param col number of columns
+	 */
 	public void setCols(int col) {
 		this.col = col;
 	}
 
+	/**
+	 * @return number of columns
+	 */
 	public int cols() {
 		return col;
 	}
 
+	/**
+	 * Returns a GameNode at a specified position.
+	 * 
+	 * @param p position of the node
+	 * @return the node at that position
+	 */
 	public GameNode node(Position p) {
 		return playfield[p.getRow() - 1][p.getCol() - 1];
 	}
 
+	/**
+	 * Returns a ToolField at a specified position.
+	 * 
+	 * @param row row
+	 * @param col column
+	 * @return ToolField at specified location
+	 */
 	public ToolField fieldAt(int row, int col) {
 		return playfield[row][col];
 	}

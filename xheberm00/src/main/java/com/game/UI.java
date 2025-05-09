@@ -24,14 +24,37 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.RowConstraints;
 
+/**
+ * Class representing a GUI of the game as well as some additional logic.
+ * It uses the JavaFX library to render and process user inputs.
+ * 
+ * This class contains a Game instance, ArrayList of buttons,
+ * 2 GridPanes (1 for the main game window, the other one is for help)
+ * 
+ * <p>Supported user interactions:</p>
+ * <ul>
+ *   <li>A: Step back a move</li>
+ *   <li>D: Step forward a move</li>
+ *   <li>E: Toggle hint view and the standart game view</li>
+ *   <li>left or right click: Turn a node by 90 degrees clockwise
+ * </ul>
+ * 
+ */
 public class UI extends Application{
+    /** Current game instance */
     static Game newgame;
+    /** List of buttons of the game board (1 for each GameNode) */
     static List<Button> buttons = new ArrayList<>();
+    /** Main gridpane */
     static GridPane gridpane = new GridPane();
+    /** Hint gridpane */
     static GridPane hint = new GridPane();
+    /** Number of rows of the game board */
     int rows;
+    /** Number of columns of the game board */
     int cols;
 
+    /** Number of turns backed */
     int turnsbacked = 0;
 
     static HashSet<String> currentlyActiveKeys;
@@ -53,11 +76,23 @@ public class UI extends Application{
     Image link_X_powered = new Image("file:lib/link_X_powered.png");
     Image empty = new Image("file:lib/empty.png");;
 
+    /**
+     * Main function that launches the application.
+     * 
+     * @param args command line arguments. First one corresponds to game dimensions (grid is always square)
+     */
     public static void main(String[] args) {
 		launch(args);
 	}
 
-    public static void generateGame(int bulbs, int rows, int cols){
+    /**
+     * Generates a new game starting state.
+     * First it generates a valid solution and than randomly rotates all non-empty nodes.
+     * 
+     * @param rows number of rows in the grid.
+     * @param cols number of columns in the grid.
+     */
+    public static void generateGame(int rows, int cols){
         newgame = Game.create(Math.max(rows, cols), Math.max(rows, cols));
         int powercol = (int)(Math.random() * cols);
         int powerrow = (int)(Math.random() * rows);
@@ -69,7 +104,6 @@ public class UI extends Application{
         List<Position> path = new ArrayList<>();
         path.add(new Position(powerrow+1, powercol+1));
 
-        System.out.println(powerrow + " " + powercol);
         while(Math.random() > probability){
             int direction = (int)(Math.random() * 4);
             
@@ -136,22 +170,31 @@ public class UI extends Application{
 
     
 
+    /**
+     * Prints the properties of a certain node.
+     * @param r row
+     * @param c column
+     */
     public void printProperties(int r, int c){
         GameNode node = newgame.node(new Position(r, c));
         System.out.println(node.position.col + " " + node.position.row + " " + node.isBulb() + " " + node.isLink() + " " + node.isPower());
         System.out.println(node.east_connector + " " + node.south_connector + " " + node.west_connector + " " + node.north_connector);
     }
 
+    /**
+     * JavaFX start method.
+     * Sets up the primary stage as well as both gridpanes.
+     * Generates a new game and adds all the needed buttons and labels.
+     * Adds logic for button clicks and keyboard presses.
+     */
     @Override
 	public void start(Stage primaryStage) {
         Parameters params = getParameters();
         List<String> args = params.getRaw();
 
-        System.out.println("Arguments: " + args);
-
         int size = Integer.valueOf(args.get(0));
 
-        generateGame(1, size, size);
+        generateGame(size, size);
 
         rows = newgame.rows();
 	    cols = newgame.cols();
@@ -194,7 +237,6 @@ public class UI extends Application{
                     newgame.node(new Position(finalR, finalC)).turn();
                     if(!newgame.node(new Position(finalR, finalC)).isEmpty())
                         newgame.rotations[finalR-1][finalC-1] = (newgame.rotations[finalR-1][finalC-1]+1)%4;
-                    System.out.println(newgame.rotations[finalR-1][finalC-1]);
                     if(!newgame.node(new Position(finalR, finalC)).isEmpty())
                         updateLog("game", finalR, finalC);
                     updateButtons();
@@ -244,6 +286,13 @@ public class UI extends Application{
 		primaryStage.show();
 	}
 
+    /**
+     * Add the most recent node rotation to the game log.
+     * 
+     * @param filename filename "game" on default
+     * @param row row of a node rotated
+     * @param col column of a node rotated
+     */
     void updateLog(String filename, int row, int col){
         try{
             removelastnlines(filename, turnsbacked);
@@ -257,6 +306,12 @@ public class UI extends Application{
         }
     }
 
+    /**
+     * Removes last n lines from a file.
+     * 
+     * @param filename filename "game" on default
+     * @param lines number of lines to remove
+     */
     void removelastnlines(String filename, int lines){
         try{
             List<String> filelines = Files.readAllLines(Paths.get(filename));
@@ -271,6 +326,13 @@ public class UI extends Application{
         }
     }
 
+    /**
+     * Returns nth line from the end.
+     * 
+     * @param filename filename "game" on default
+     * @param linestogoback
+     * @return String corresponding to nth line from the end.
+     */
     String readnthlinefromend(String filename, int linestogoback){
         String line = "";
         if(linestogoback == 0) return "";
@@ -305,6 +367,12 @@ public class UI extends Application{
         return "";
     }
 
+    /**
+     * Reverts last node rotation and adds 1 to turnsbacked variable
+     * if possible.
+     * 
+     * @param filename filename "game" on default
+     */
     void stepBack(String filename){
         String line = readnthlinefromend(filename, turnsbacked+1);
 
@@ -324,6 +392,12 @@ public class UI extends Application{
         turnsbacked++;
     }
 
+    /**
+     * Re-reverts a node rotation and subtracts 1 from turnsbacked variable
+     * if possible.
+     * 
+     * @param filename filename "game" on default
+     */
     void stepForward(String filename){
         String line = readnthlinefromend(filename, turnsbacked);
 
@@ -340,6 +414,13 @@ public class UI extends Application{
         turnsbacked--;
     }
 
+    /**
+     * Updates all the labels in the hint GridPane
+     * corresponding to number of rotation needed to reach the correct
+     * solution for each node.
+     * 
+     * @param labels 2D array of labels to update
+     */
     void updateLabels(Label[][] labels){
         for(int r = 0; r < rows; r++){
             for(int c = 0; c < cols; c++){
@@ -352,6 +433,9 @@ public class UI extends Application{
         }
     }
 
+    /**
+     * Updates the UI of all buttons in the grid.
+     */
     void updateButtons(){
         int i = 0;
         for(Button button : buttons){
@@ -362,11 +446,17 @@ public class UI extends Application{
             imageview.fitWidthProperty().bind(gridpane.widthProperty().divide(cols));
             imageview.fitHeightProperty().bind(gridpane.heightProperty().divide(rows));
             button.setGraphic(imageview);
-            //if(!node.isEmpty()) System.out.println(node.position.col + " " + node.position.row + " " + node.isBulb() + " " + node.isLink() + " " + node.isPower());
             i++;
         }
     }
 
+    /**
+     * Returns an ImageView for certain gamenode depending
+     * on its type, connectors and whether its powered.
+     * 
+     * @param node GameNode
+     * @return ImageView of a certain gamenode
+     */
     ImageView getCorrectImageView(GameNode node){
         if(node.isEmpty()){
             return new ImageView(empty);

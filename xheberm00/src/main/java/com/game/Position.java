@@ -1,7 +1,7 @@
 package com.game;
 
 /**
- * A position on a game grid with a row and col coordinates.
+ * Class representing a position on a game grid with a row and col coordinates.
  */
 public class Position {
 	int row, col;

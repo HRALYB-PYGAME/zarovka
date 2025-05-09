@@ -1,5 +1,26 @@
 package com.game;
 
+/**
+ * Class representing a cardinal direction in the game.
+ */
 public enum Side {
-	EAST, NORTH, SOUTH, WEST;
+	/**
+     * East direction.
+     */
+    EAST,
+
+    /**
+     * North direction.
+     */
+    NORTH,
+
+    /**
+     * South direction.
+     */
+    SOUTH,
+
+    /**
+     * West direction.
+     */
+    WEST;
 }
